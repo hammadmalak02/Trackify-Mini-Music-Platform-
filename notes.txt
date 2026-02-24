@@ -1,0 +1,431 @@
+project overview
+es project mai hum spotify ka clone banaenge this project will include 2 feature
+1. jaha pur artist apne songs create kur skte hai
+2. user un songs ko sun sa kai.
+
+spotify_clone with authentication starts from 5:59:45
+
+    "username": "Asad Ullah",
+    "email": "asadullah@gmail.com",
+    "password": "asad123"
+
+3. artist can create thier music albums
+stopped at 7:52:52
+
+
+
+// below is my server.js file code
+// require('dotenv').config();
+// const app = require('./src/app');
+// const connectDB = require('./src/db/db')
+
+// connectDB();
+
+// app.listen(3000, () =>{
+//     console.log('server is running on port 3000');
+// })
+
+
+
+// below is my app.js file code 
+// const express = require('express');
+// const cookieParser = require('cookie-parser');
+// const authRoutes = require('./routes/auth.routes');
+// const musicRoutes = require('./routes/music.routes');
+
+// const app = express();
+// app.use(express.json());
+// app.use(cookieParser());
+
+// app.use('/api/auth', authRoutes);
+// app.use('/api/music', musicRoutes);
+
+
+// module.exports = app;
+
+
+// below is my auth.controller.js file code which is inside controllers folder
+// const userModel = require('../models/user.model');
+// const jwt = require('jsonwebtoken');
+// const bcrypt = require('bcryptjs');
+
+// async function registerUser(req, res) {
+//     const { username, email, password, role = 'user' } = req.body;
+
+//     const isUserAlreadyExists = await userModel.findOne({
+//         $or: [
+//             { username },
+//             { email }
+//         ]
+//     })
+
+//     if (isUserAlreadyExists) {
+//         return res.status(409).json({ message: "user already registered" })
+//     }
+
+//     const hash = await bcrypt.hash(password, 10);
+
+//     const user = await userModel.create({
+//         username,
+//         email,
+//         password: hash,
+//         role
+//     });
+
+//     const token = jwt.sign({
+//         id: user._id,
+//         role: user.role,
+//     }, process.env.JWT_SECRET)
+
+//     res.status(201).json({
+//         message: 'user registered successfully!',
+//         user: {
+//             id: user._id,
+//             username: user.username,
+//             email: user.email,
+//             role: user.role
+//         }
+//     })
+// }
+
+// async function loginUser(req, res) {
+//     const { username, email, password } = req.body;
+//     const user = await userModel.findOne({
+//         $or: [
+//             { username },
+//             { email }
+//         ]
+//     })
+//     if (!user) {
+//         return res.status(401).json({ message: " Invalid credentials " })
+//     }
+
+//     const isPasswordValid = await bcrypt.compare(password, user.password)
+
+//     if (!isPasswordValid) {
+//         return res.status(401).json({ message: "Invalid credentials" })
+//     }
+
+//     const token = jwt.sign({
+//         id: user._id,
+//         role: user.role,
+//     }, process.env.JWT_SECRET)
+
+//     res.cookie('token', token)
+
+//     res.status(200).json({
+//         message: 'user logged in successfylly!',
+//         user: {
+//             id: user._id,
+//             username: user.username,
+//             email: user.email,
+//             role: user.role
+//         }
+//     })
+// }
+
+// async function logoutUser(req, res) {
+//     res.clearCookie('token')
+//     res.status(200).json({ message: 'user logout successfully!'})
+// }
+
+// module.exports = { registerUser, loginUser, logoutUser };
+
+
+
+// below is my music.controller.js file code which is inside controllers folder
+// const musicModel = require('../models/music.model');
+// const albumModel = require('../models/album.model');
+// const { uploadFile } = require('../services/storage.service');
+// const jwt = require('jsonwebtoken');
+
+// async function createMusic(req, res) {
+
+//     const { title } = req.body;
+//     const file = req.file;
+
+//     const result = await uploadFile(file.buffer.toString('base64'));
+
+//     const music = await musicModel.create({
+//         uri: result.url,
+//         title,
+//         artist: req.user.id
+//     })
+
+//     res.status(201).json({
+//         message: 'Music Created successfully!',
+//         music: {
+//             id: music._id,
+//             uri: music.uri,
+//             title: music.title,
+//             artist: music.artist
+//         }
+//     })
+// }
+
+// async function createAlbum(req, res) {
+
+//     const { title, musics } = req.body;
+
+//     const album = await albumModel.create({
+//         title,
+//         artist: req.user.id,
+//         musics: musics,
+//     })
+
+//     res.status(201).json({
+//         message: 'Album created successfully!',
+//         album: {
+//             id: album._id,
+//             title: album.title,
+//             artist: album.artist,
+//             musics: album.musics,
+//         }
+//     })
+// }
+
+// async function getAllMusics(req, res) {
+//     const musics = await musicModel.find().populate('artist', 'username email')
+
+//     res.status(200).json({
+//         message: 'Musics fetched successfully!',
+//         musicsc: musics,
+//     })
+// }
+
+// async function getAllAlbums(req, res){
+//     const albums = await albumModel.find().select('title artist').populate('artist', 'username email')
+
+//     res.status(200).json({
+//         message: 'Albums fetched successfully!',
+//         albums: albums,
+//     })
+// }
+
+// async function getAlbumById(req, res){
+
+//     const albumId = req.params.albumId;
+
+//     const album = await albumModel.findById(albumId).populate('artist', 'username email').populate('musics')
+
+//     return res.status(200).json({
+//         message: 'Album fetched successfully!',
+//         album: album,
+//     })
+
+// }
+
+
+// module.exports = { createMusic, createAlbum, getAllMusics, getAllAlbums, getAlbumById }
+
+
+// below is the db.js file code which is inside db folder
+// const mongoose = require('mongoose');
+
+// async function connectDB() {
+//     try {
+//         await mongoose.connect("mongodb://localhost:27017/shopify_clone");
+//         console.log('Database connected successfully!');
+//     }
+//     catch (err) {
+//         console.error('Database not connected Succesfully!', err)
+//     }
+// }
+
+// module.exports = connectDB;
+
+
+
+// below is the auth.middleware.js file code which is inside middlewares folder
+// const jwt = require('jsonwebtoken');
+
+// async function authArtist(req, res, next) {
+//     const token = req.cookies.token;
+
+//     if (!token) {
+//         return res.status(401).json({ message: 'unauthorized' });
+//     }
+//     try {
+
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//         if (decoded.role !== 'artist') {
+//             return res.status(403).json({ message: $`{you don't have access to create an album ` })
+//         }
+
+//         req.user = decoded;
+
+//         next();
+
+//     } catch (error) {
+//         console.log(err);
+//         return res.status(401).json({ message: 'unauthorized' })
+//     }
+// }
+
+
+// async function authUser(req, res, next) {
+//     const token = req.cookies.token;
+
+//     if (!token) {
+//         return res.status(401).json({ message: 'unauthorized' });
+//     }
+//     try {
+
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//         if (decoded.role !== 'user') {
+//             return res.status(403).json({ message: $`{you don't have access to create an album ` })
+//         }
+
+//         req.user = decoded;
+
+//         next();
+
+//     } catch (err) {
+//         console.log(err);
+//         return res.status(401).json({ message: 'unauthorized' })
+//     }
+// }
+
+// module.exports = { authArtist, authUser }
+
+
+
+// below is the album.model.js file code which is inside models folder
+// const mongoose = require('mongoose');
+
+// const albumSchema = new mongoose.Schema({
+//     title: {
+//         type: String,
+//         required: true,
+//     },
+//     musics: [{
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: 'music',
+//     }],
+//     artist: [{
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: 'user',
+//         required: true,
+//     }]
+// });
+
+// const albumModel = mongoose.model('album', albumSchema);
+
+// module.exports = albumModel;
+
+
+// below is the music.model.js file code which is inside models folder
+// const mongoose = require('mongoose');
+
+
+// const musicSchema = new mongoose.Schema({
+//     uri:{
+//         type: String,
+//         required: true
+//     },
+//     title:{
+//         type: String,
+//         required: true
+//     },
+//     artist:{
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: "user",
+//         required: true,
+//     }
+// })
+
+// const musicModel = mongoose.model('music', musicSchema);
+
+// module.exports = musicModel;
+
+
+// below is the user.model.js file code which is inside models folder
+// const mongoose = require('mongoose');
+
+// const userSchema = new mongoose.Schema({
+//     username: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//     },
+//     email: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//     },
+//     password: {
+//         type: String,
+//         required: true,
+//     },
+//     role: {
+//         type: String,
+//         enum: ['artist', 'user'],
+//         default: 'user',
+//     }
+// })
+
+
+// const userModel = mongoose.model('user', userSchema);
+
+// module.exports = userModel;
+
+// below is the auth.routes.js file code which is inside routes folder
+// const express = require('express');
+// const authController = require('../controllers/auth.controller')
+
+// const router = express.Router();
+
+// router.post('/register', authController.registerUser);
+// router.post('/login', authController.loginUser);
+// router.post('/logout', authController.logoutUser);
+
+// module.exports = router;
+
+
+// below is the music.routes.js file code which is inside routes folder
+// const express = require('express');
+// const musicController = require('../controllers/music.controller');
+// const authMiddleware = require('../middlewares/auth.middleware');
+// const multer = require('multer');
+
+// const upload = multer({
+//     storage: multer.memoryStorage()
+// });
+
+// const router = express.Router();
+
+// router.post('/upload', authMiddleware.authArtist, upload.single('music'), musicController.createMusic)
+// router.post('/album', authMiddleware.authArtist, musicController.createAlbum);
+// router.get('/', authMiddleware.authUser, musicController.getAllMusics)
+// router.get('/albums', authMiddleware.authUser, musicController.getAllAlbums)
+// router.get('/albums/:albumId', authMiddleware.authUser, musicController.getAlbumById)
+
+
+// module.exports = router;
+
+
+// below is the storage.service.js file code which is inside services folder
+// const { ImageKit } = require('@imagekit/nodejs');
+
+// const ImageKitClient = new ImageKit({
+//     privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+// })
+
+// async function uploadFile(file){
+//     const result = await ImageKitClient.files.upload({
+//         file,
+//         fileName: 'music_' + Date.now(),
+//         folder: '/music'
+//     })
+
+//     return result;
+// }
+
+// module.exports = { uploadFile };
+Ubaid Ur Rehman
+ubaidurrehman@gmail.com
+ubaid123
+user
+

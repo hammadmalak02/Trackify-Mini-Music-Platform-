@@ -137,8 +137,8 @@ Frontend runs on: `http://localhost:5174`
 
 ## 👤 Author
 
-**Your Name**
-- GitHub: [Hammad-Ur-Rehman](https://github.com/hammadmalak02)
+**Hammad Ur Rehman**
+- GitHub: https://github.com/hammadmalak02
 
 ---
 
